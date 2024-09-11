@@ -1,0 +1,5 @@
+export enum TypeSubQuestion {
+  DEFAULT = 'DEFAULT',
+  PERSONALIZED = 'PERSONALIZED',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+}
