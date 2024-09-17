@@ -7,7 +7,7 @@ RUN npm install pnpm -g
 
 COPY package*.json .
 COPY pnpm-lock.yaml .
-RUN pnpm install -P
+RUN pnpm install
 
 COPY . .
 RUN pnpm build
@@ -20,6 +20,6 @@ COPY --from=builder /app .
 
 EXPOSE 3005
 
-ENTRYPOINT [ "node","dist/main" ]
+ENTRYPOINT [ "node","dist/src/main" ]
 
 
