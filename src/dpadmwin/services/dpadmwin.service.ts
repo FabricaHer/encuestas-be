@@ -96,4 +96,11 @@ export class DpadmwinService {
     WHERE DP.DOC_NUMERO = '${admission_id}' AND DP.DOC_TIPDOC = 'ADM'`,
     );
   }
+
+  async getUser(username: string) {
+    return this.dataSource.query(
+      `SELECT OPE_NUMERO AS id, OPE_NOMBRE AS username, OPE_CLAVE AS PASSWORD,OPE_MAPMNU AS role,OPE_NOMCOM AS NAME 
+      FROM ADMCONFIG.DPUSUARIOS WHERE OPE_NOMBRE = '${username}'`,
+    );
+  }
 }
