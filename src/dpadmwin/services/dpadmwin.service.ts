@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { UserModel } from '../models/user.model';
 @Injectable()
 export class DpadmwinService {
   constructor(private readonly dataSource: DataSource) {}
@@ -97,10 +98,13 @@ export class DpadmwinService {
     );
   }
 
-  async getUser(username: string) {
-    return this.dataSource.query(
-      `SELECT OPE_NUMERO AS id, OPE_NOMBRE AS username, OPE_CLAVE AS PASSWORD,OPE_MAPMNU AS role,OPE_NOMCOM AS NAME 
+  async getUser(username: string): Promise<UserModel | null> {
+    const user = (await this.dataSource.query(
+      `SELECT OPE_NUMERO AS id, OPE_NOMBRE AS username, OPE_CLAVE AS password,OPE_MAPMNU AS role,OPE_NOMCOM AS name 
       FROM ADMCONFIG.DPUSUARIOS WHERE OPE_NOMBRE = '${username}'`,
-    );
+    )) as UserModel[];
+    if (user.length <= 0) return null;
+
+    return user[0];
   }
 }

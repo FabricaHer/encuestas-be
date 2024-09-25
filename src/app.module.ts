@@ -9,6 +9,7 @@ import { QuestionModule } from './question/question.module';
 import { AreaModule } from './area/area.module';
 import { AnswerPatientModule } from './answer-patient/answer-patient.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { StatisticsModule } from './statistics/statistics.module';
     AreaModule,
     AnswerPatientModule,
     StatisticsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

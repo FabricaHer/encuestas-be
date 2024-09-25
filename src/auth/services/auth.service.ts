@@ -8,10 +8,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, password: string) {
+  async logIn(username: string, password: string) {
     const user = await this.dpadmwinService.getUser(username);
 
-    if (user.password != password) {
+    if (!user && user.password != password) {
       throw new UnauthorizedException();
     }
 
@@ -19,6 +19,7 @@ export class AuthService {
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      roles: [user.role],
     };
   }
 }

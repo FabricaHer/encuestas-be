@@ -3,6 +3,8 @@ import { ConfigType } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import config from '../config';
+import { DpadmwinModule } from '../dpadmwin/dpadmwin.module';
+import { AuthController } from './controllers/auth.controller';
 import { AuthGuard } from './guard/auth.guard';
 import { AuthService } from './services/auth.service';
 
@@ -20,7 +22,9 @@ import { AuthService } from './services/auth.service';
         };
       },
     }),
+    DpadmwinModule,
   ],
+  controllers: [AuthController],
   providers: [
     AuthService,
     {
