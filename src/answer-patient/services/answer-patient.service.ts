@@ -197,7 +197,7 @@ export class AnswerPatientService {
     const end = endDate.toISOString().split('T')[0];
     const lastAnswers: { date: Date; id: number; bed: string; name: string }[] =
       await this.answerPatientRepo.query(`
-    SELECT created_at AS date, id, CAM_DSCRIP AS bed, CONCAT(PAC_NOM,' ',PAC_APELL) AS name FROM answer_patient AS answer
+    SELECT created_at AS date, id, CAM_DSCRIP AS bed, CONCAT(PAC_NOM,' ',PAC_APELL) AS name, admission_id FROM answer_patient AS answer
     INNER JOIN DPADMWIN.TBCAMAS AS cama ON cama.CAM_CODIGO = answer.bed_id
     INNER JOIN DPADMWIN.TBPACIENTE AS pac ON pac.PAC_CED = answer.patient_id
     WHERE DATE(created_at) BETWEEN '${start}' AND '${end}'
@@ -206,15 +206,37 @@ export class AnswerPatientService {
     return lastAnswers;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} answerPatient`;
-  }
+  async findByAdmission(admissionId: string) {
+    const answers = await this.answerPatientRepo.findOne({
+      where: {
+        admissionId,
+      },
+      relations: {
+        format: {
+          questions: {
+            subQuestion: true,
+          },
+        },
+        answersPatient: {
+          subQuestion: true,
+        },
+        comment: true,
+      },
+    });
 
-  update(id: number, updateAnswerPatientDto: UpdateAnswerPatientDto) {
-    return `This action updates a #${id} answerPatient`;
-  }
+    const subQuestionsWithQualifications: { [id: string]: number } = {};
+    answers.answersPatient.forEach((answersPatient) => {
+      subQuestionsWithQualifications[answersPatient.subQuestion.id] =
+        answersPatient.qualification;
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} answerPatient`;
+    answers.format.questions.forEach((question) => {
+      question.subQuestion.forEach((subQuestion) => {
+        subQuestion.qualification =
+          subQuestionsWithQualifications[subQuestion.id] || 0;
+      });
+    });
+
+    return answers;
   }
 }

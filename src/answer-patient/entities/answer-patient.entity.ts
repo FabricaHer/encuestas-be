@@ -6,9 +6,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AnswersPatient } from './answers-patient.entity';
+import { Comment } from './comment.entity';
 
 @Entity({ name: 'answer_patient' })
 export class AnswerPatient {
@@ -30,6 +34,15 @@ export class AnswerPatient {
   @ManyToOne(() => Format)
   @JoinColumn({ name: 'format_id' })
   format: Format;
+
+  @OneToMany(
+    () => AnswersPatient,
+    (answersPatient) => answersPatient.answerPatient,
+  )
+  answersPatient: AnswersPatient[];
+
+  @OneToOne(() => Comment, (comment) => comment.answerPatient)
+  comment: Comment;
 
   @CreateDateColumn({
     name: 'created_at',

@@ -21,20 +21,7 @@ export class AnswerPatientController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.answerPatientService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateAnswerPatientDto: UpdateAnswerPatientDto,
-  ) {
-    return this.answerPatientService.update(+id, updateAnswerPatientDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.answerPatientService.remove(+id);
+  getByAdmission(@Param('id') id: string) {
+    return this.answerPatientService.findByAdmission(id);
   }
 }
