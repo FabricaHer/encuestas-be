@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AnswerPatientService } from '../services/answer-patient.service';
 import { CreateAnswerPatientDto } from '../dto/create-answer-patient.dto';
@@ -20,21 +22,11 @@ export class AnswerPatientController {
     return this.answerPatientService.create(createAnswerPatientDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.answerPatientService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateAnswerPatientDto: UpdateAnswerPatientDto,
+  @Get()
+  findAll(
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('page', ParseIntPipe) page: number,
   ) {
-    return this.answerPatientService.update(+id, updateAnswerPatientDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.answerPatientService.remove(+id);
+    return this.answerPatientService.getAnswers(limit, page);
   }
 }
