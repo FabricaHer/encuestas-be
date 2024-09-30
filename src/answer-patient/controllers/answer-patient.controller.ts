@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AnswerPatientService } from '../services/answer-patient.service';
 import { CreateAnswerPatientDto } from '../dto/create-answer-patient.dto';
@@ -23,5 +25,12 @@ export class AnswerPatientController {
   @Get(':id')
   getByAdmission(@Param('id') id: string) {
     return this.answerPatientService.findByAdmission(id);
+  }
+  @Get()
+  findAll(
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('page', ParseIntPipe) page: number,
+  ) {
+    return this.answerPatientService.getAnswers(limit, page);
   }
 }

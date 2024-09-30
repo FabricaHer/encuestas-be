@@ -10,6 +10,7 @@ import { AnswerPatient } from '../entities/answer-patient.entity';
 import { AnswersPatient } from '../entities/answers-patient.entity';
 import { Comment } from '../entities/comment.entity';
 import * as moment from 'moment';
+import { formatResponse, getSkip } from '../../utils/functions/paginated';
 
 @Injectable()
 export class AnswerPatientService {
@@ -183,7 +184,7 @@ export class AnswerPatientService {
     INNER JOIN sub_question ON sub_question.id = answers_patient.sub_question_id
     INNER JOIN question ON question.id = sub_question.question_id
     INNER JOIN area ON area.id = question.area_id
-    WHERE  DATE(answers_patient.created_at) BETWEEN '${start}' AND '${end}' and area.status = '1'
+    WHERE  DATE(answers_patient.created_at) BETWEEN '${start}' AND '${end}' and area.status = '1' AND answers_patient.deleted_at is null
     GROUP BY area.id`,
       );
     return data;
@@ -238,5 +239,17 @@ export class AnswerPatientService {
     });
 
     return answers;
+  }
+
+  async getAnswers(limit: number, page: number) {
+    const skip = getSkip(limit, page);
+    const data = await this.answerPatientRepo.query(`
+    SELECT created_at AS date, id, CAM_DSCRIP AS bed, CONCAT(PAC_NOM,' ',PAC_APELL) AS name, admission_id FROM answer_patient AS answer
+    INNER JOIN DPADMWIN.TBCAMAS AS cama ON cama.CAM_CODIGO = answer.bed_id
+    INNER JOIN DPADMWIN.TBPACIENTE AS pac ON pac.PAC_CED = answer.patient_id
+     ORDER BY created_at DESC LIMIT ${limit} offset ${skip}`);
+    const total = await this.answerPatientRepo.count();
+
+    return formatResponse(data, page, limit, total);
   }
 }
