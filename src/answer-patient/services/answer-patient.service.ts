@@ -237,7 +237,7 @@ export class AnswerPatientService {
           subQuestionsWithQualifications[subQuestion.id] || 0;
       });
     });
-
+    delete answers.answersPatient;
     return answers;
   }
 
