@@ -39,6 +39,9 @@ export class AnswerPatientService {
       bedId: createAnswerPatientDto.bedId,
       format,
       patientId: createAnswerPatientDto.patientId,
+      createdAt: createAnswerPatientDto?.createdAt
+        ? createAnswerPatientDto?.createdAt
+        : undefined,
     });
 
     await this.commentRepo.save({
@@ -55,6 +58,9 @@ export class AnswerPatientService {
             subQuestion,
             qualification: answerPatient.qualification,
             answerPatient: answerPatientCreated,
+            createdAt: createAnswerPatientDto?.createdAt
+              ? createAnswerPatientDto?.createdAt
+              : undefined,
           });
         },
       );
@@ -207,6 +213,40 @@ export class AnswerPatientService {
     return lastAnswers;
   }
 
+  async findByAdmission(admissionId: string) {
+    const answers = await this.answerPatientRepo.findOne({
+      where: {
+        admissionId,
+      },
+      relations: {
+        format: {
+          questions: {
+            subQuestion: true,
+          },
+        },
+        answersPatient: {
+          subQuestion: true,
+        },
+        comment: true,
+      },
+    });
+
+    const subQuestionsWithQualifications: { [id: string]: number } = {};
+    answers.answersPatient.forEach((answersPatient) => {
+      subQuestionsWithQualifications[answersPatient.subQuestion.id] =
+        answersPatient.qualification;
+    });
+
+    answers.format.questions.forEach((question) => {
+      question.subQuestion.forEach((subQuestion) => {
+        subQuestion.qualification =
+          subQuestionsWithQualifications[subQuestion.id] || 0;
+      });
+    });
+    delete answers.answersPatient;
+    return answers;
+  }
+
   async getAnswers(limit: number, page: number) {
     const skip = getSkip(limit, page);
     const data = await this.answerPatientRepo.query(`
@@ -217,17 +257,5 @@ export class AnswerPatientService {
     const total = await this.answerPatientRepo.count();
 
     return formatResponse(data, page, limit, total);
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} answerPatient`;
-  }
-
-  update(id: number, updateAnswerPatientDto: UpdateAnswerPatientDto) {
-    return `This action updates a #${id} answerPatient`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} answerPatient`;
   }
 }

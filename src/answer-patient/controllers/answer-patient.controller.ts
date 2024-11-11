@@ -22,6 +22,10 @@ export class AnswerPatientController {
     return this.answerPatientService.create(createAnswerPatientDto);
   }
 
+  @Get(':id')
+  getByAdmission(@Param('id') id: string) {
+    return this.answerPatientService.findByAdmission(id);
+  }
   @Get()
   findAll(
     @Query('limit', ParseIntPipe) limit: number,

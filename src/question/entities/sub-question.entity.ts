@@ -65,4 +65,6 @@ export class SubQuestion {
   @IsOptional()
   @OneToMany(() => Answer, (answer) => answer.subQuestion)
   answers: Answer[];
+
+  qualification?: number;
 }
