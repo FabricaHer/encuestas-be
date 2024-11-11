@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -31,6 +32,10 @@ export class CreateAnswerPatientDto {
 
   @IsArray()
   answers: AnswersPatientDto[];
+
+  @IsDateString()
+  @IsOptional()
+  createdAt?: String;
 }
 
 export class AnswersPatientDto {

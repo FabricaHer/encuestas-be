@@ -39,6 +39,9 @@ export class AnswerPatientService {
       bedId: createAnswerPatientDto.bedId,
       format,
       patientId: createAnswerPatientDto.patientId,
+      createdAt: createAnswerPatientDto?.createdAt
+        ? createAnswerPatientDto?.createdAt
+        : undefined,
     });
 
     await this.commentRepo.save({
@@ -55,6 +58,9 @@ export class AnswerPatientService {
             subQuestion,
             qualification: answerPatient.qualification,
             answerPatient: answerPatientCreated,
+            createdAt: createAnswerPatientDto?.createdAt
+              ? createAnswerPatientDto?.createdAt
+              : undefined,
           });
         },
       );
