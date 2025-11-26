@@ -1,10 +1,11 @@
-FROM node:slim AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
 
+# Variables de base de datos (opcionales durante build)
 ARG DATABASE_HOST
 ENV DATABASE_HOST=${DATABASE_HOST}
 
@@ -20,25 +21,41 @@ ENV DATABASE_PASSWORD=${DATABASE_PASSWORD}
 ARG DATABASE_NAME
 ENV DATABASE_NAME=${DATABASE_NAME}
 
+# Instalar dependencias del sistema y pnpm
+RUN apt update && apt install -y --no-install-recommends \
+    git \
+    python3 \
+    make \
+    g++ \
+    && npm install -g pnpm \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apt update
-RUN npm install pnpm -g
-
-COPY package*.json .
-COPY pnpm-lock.yaml .
+COPY package*.json ./
+COPY pnpm-lock.yaml ./
 RUN pnpm install
 
 COPY . .
 RUN pnpm build
 
+FROM node:20-alpine AS production
 
-
-FROM node:lts-alpine AS production
 WORKDIR /app
-COPY --from=builder /app .
+
+# Instalar solo producción dependencies
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/pnpm-lock.yaml ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+
+# Instalar pnpm en la etapa de producción si es necesario
+RUN npm install -g pnpm
+
+# Variables de entorno para producción
+ENV NODE_ENV=production
 
 EXPOSE 3000
 
-ENTRYPOINT [ "node","dist/src/main" ]
+USER node
 
-
+CMD ["node", "dist/src/main"]
