@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS builder
+FROM node:slim AS builder
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ FROM node:lts-alpine AS production
 WORKDIR /app
 COPY --from=builder /app .
 
-EXPOSE 3005
+EXPOSE 3000
 
 ENTRYPOINT [ "node","dist/src/main" ]
 

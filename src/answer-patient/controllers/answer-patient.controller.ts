@@ -1,17 +1,14 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
-  Query,
   ParseIntPipe,
+  Post,
+  Query,
 } from '@nestjs/common';
-import { AnswerPatientService } from '../services/answer-patient.service';
 import { CreateAnswerPatientDto } from '../dto/create-answer-patient.dto';
-import { UpdateAnswerPatientDto } from '../dto/update-answer-patient.dto';
+import { AnswerPatientService } from '../services/answer-patient.service';
 
 @Controller('answer-patient')
 export class AnswerPatientController {

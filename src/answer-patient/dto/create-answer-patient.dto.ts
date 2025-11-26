@@ -35,7 +35,7 @@ export class CreateAnswerPatientDto {
 
   @IsDateString()
   @IsOptional()
-  createdAt?: String;
+  createdAt?: string;
 }
 
 export class AnswersPatientDto {

@@ -1,16 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as moment from 'moment';
 import { AreaService } from 'src/area/services/area.service';
 import { FormatService } from 'src/format/services/format.service';
 import { SubQuestionService } from 'src/question/services/sub-question.service';
 import { Between, Repository } from 'typeorm';
+import { formatResponse, getSkip } from '../../utils/functions/paginated';
 import { CreateAnswerPatientDto } from '../dto/create-answer-patient.dto';
-import { UpdateAnswerPatientDto } from '../dto/update-answer-patient.dto';
 import { AnswerPatient } from '../entities/answer-patient.entity';
 import { AnswersPatient } from '../entities/answers-patient.entity';
 import { Comment } from '../entities/comment.entity';
-import * as moment from 'moment';
-import { formatResponse, getSkip } from '../../utils/functions/paginated';
 
 @Injectable()
 export class AnswerPatientService {
@@ -113,12 +112,14 @@ export class AnswerPatientService {
         },
       },
     });
-    answers.forEach((answer, i) => {
+    answers.forEach((answer) => {
       const dateString = answer.createdAt.toISOString().split('T')[0];
       const dataString = map.get(dateString);
 
       if (dataString.has(answer.subQuestion.question.area.description)) {
-        let data = dataString.get(answer.subQuestion.question.area.description);
+        const data = dataString.get(
+          answer.subQuestion.question.area.description,
+        );
         data.qualifications += answer.qualification;
         data.total += 1;
         dataString.set(answer.subQuestion.question.area.description, {

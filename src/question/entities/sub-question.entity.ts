@@ -1,5 +1,5 @@
-import { Answer } from './answer.entity';
-import { TypeSubQuestion } from '../enums/Type.enum';
+import { Exclude } from 'class-transformer';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -11,9 +11,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { TypeSubQuestion } from '../enums/Type.enum';
+import { Answer } from './answer.entity';
 import { Question } from './question.entity';
-import { IsNotEmpty, IsOptional } from 'class-validator';
-import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'sub_question' })
 export class SubQuestion {

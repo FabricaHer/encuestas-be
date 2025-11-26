@@ -8,6 +8,7 @@ import config from './';
     ConfigModule.forRoot({
       load: [config],
       isGlobal: true,
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),
   ],
 
